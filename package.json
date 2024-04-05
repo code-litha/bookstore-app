@@ -1,0 +1,19 @@
+{
+  "name": "belajar-node-postgres",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node app.js",
+    "db:connect": "node config/connection.js",
+    "db:migrate": "node migrations/setup.js",
+    "db:seed": "node seedings/seeding.js",
+    "db:all": "npm run db:connect && npm run db:migrate && npm run db:seed",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "litha",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.11.5"
+  }
+}
