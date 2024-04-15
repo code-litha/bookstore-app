@@ -1,17 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book List</title>
-</head>
-<body>
-    <a href="/categories"><button>Categories</button></a>
-    <a href="/books"><button>Books</button></a>
-    <a href="/books/add"><button>Add Books</button></a>
+<%- include('partials/navbar', { title : 'Book List'}) %>
 
     <h1>Book List</h1>
+
+    <form action="/books">
+        <!-- Balik ke method GET /books dengan mengirimkan request query dengan key(name)=value -->
+        <label>Title :</label>
+        <input 
+            type="text" 
+            placeholder="Type something..." 
+            name="search" 
+            value="<%= search %>" 
+        />
+        <input type="submit" value="Search" />
+    </form>
+
+    <br>
     <table border="3">
         <tr>
             <th>ID</th>
@@ -32,5 +35,5 @@
             </tr>
         <% } %>
     </table>
-</body>
-</html>
+
+<%- include('partials/footer') %>

@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Book</title>
-</head>
-<body>
-    <a href="/categories"><button>Categories</button></a>
-    <a href="/books"><button>Books</button></a>
-    <a href="/books/add"><button>Add Books</button></a>
+<%- include('partials/navbar', { title: 'Add Book' }) %>
+
     <h1>Add Book</h1>
+    <% if (errors.length) { %>
+        <% errors.forEach(err => { %>
+            <p style="color: red;"><%= err %></p>
+        <% }) %>
+    <% } %>
     <form action="/books/add" method="post">
         Name : <input type="text" name="name" autocomplete="off"><br>
         Price : <input type="number" name="price" autocomplete="off"><br>
@@ -30,5 +25,5 @@
         <br>
         <input type="submit" value="Save">
     </form>
-</body>
-</html>
+
+<%- include('partials/footer') %>

@@ -15,8 +15,10 @@ class Controller {
 
   static async listBooks (request, response) {
     try {
-      const books = await Model.readBooks()
-      response.render('books', { books })
+      const { search } = request.query
+      console.log(search, '<<< search')
+      const books = await Model.readBooks(search)
+      response.render('books', { books, search })
     } catch (error) {
       console.log(error);
       response.send(error)
@@ -53,8 +55,15 @@ class Controller {
 
   static async renderAdd(req, res){
     try {
+      // const query = req.query
+      // console.log(query, '<<< query')
+      let errors = []
+      if (req.query.errors) {
+        errors = req.query.errors.split(',')
+      }
+      // console.log(errors, '<<< errors nih')
       let categories = await Model.readCategories()
-      res.render('add', { categories })
+      res.render('add', { categories, errors })
     } catch (error) {
       console.log(error);
       res.send(error)
@@ -68,6 +77,13 @@ class Controller {
       res.redirect('/books')
     } catch (error) {
       console.log(error);
+      if (error.name === 'ErrorValidate') {
+        // "?" => untuk mengirimkan request query dengan key=value
+        // ?key1=value1&key2=value2
+        res.redirect(`/books/add?errors=${error.errors}`)
+        return
+      }
+      
       res.send(error)
     }
   }

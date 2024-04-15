@@ -19,16 +19,20 @@ class Model {
     }
   }
 
-  static async readBooks () {
+  static async readBooks (search) {
     try {
-      const query = `
+      let query = `
         SELECT 
           b.*,
           c."id"  AS category_id,
           c."name" AS category_name
         FROM "Books" b 
-        INNER JOIN "Categories" c ON c.id = b."CategoryId" ;
+        INNER JOIN "Categories" c ON c.id = b."CategoryId"
       `
+      if (search) {
+        query += ` WHERE b.name iLIKE '%${search}%' `
+      }
+      
       const data = await pool.query(query)
       const books = Factory.bulkCreateBooks(data.rows)
       return books
@@ -77,6 +81,14 @@ class Model {
 
   static async addBook(name, price, imgUrl, isDiscount, publisher, author, synopsis, CategoryId){
     try {
+      // if (!name) throw { error: `name is required` }
+      // if (!Number(price)) throw { error: `price is required` }
+      const errorValidates = this.validateBook(name, price, imgUrl, isDiscount, publisher, author, synopsis, CategoryId)
+
+      if (errorValidates.length) {
+        throw { name: 'ErrorValidate', errors: errorValidates }
+      }
+
       let query = `INSERT INTO "Books" (name, price, "imgUrl", "isDiscount", publisher, author, synopsis, "CategoryId")
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
       let discount = +isDiscount ? true : false
@@ -86,6 +98,38 @@ class Model {
     } catch (error) {
       throw error
     }
+  }
+
+  static validateBook(name, price, imgUrl, isDiscount, publisher, author, synopsis, CategoryId) {
+    let errors = []
+
+    if (!name) {
+      errors.push(`Name is required`)
+    } else if (name.length > 30) {
+      errors.push(`Length Name must be less than 30 characters`)
+    }
+
+    if (isDiscount === undefined) {
+      errors.push(`Discount must be checked`)
+    }
+
+    if (!Number(price)) {
+      errors.push(`Price is required`)
+    }
+    if (!imgUrl) {
+      errors.push(`imgUrl is required`)
+    }
+    if (!publisher) {
+      errors.push(`Publisher is required`)
+    }
+    if (!author) {
+      errors.push(`Author is required`)
+    }
+    if (!CategoryId) {
+      errors.push(`CategoryId is required`)
+    }
+
+    return errors
   }
 }
 
